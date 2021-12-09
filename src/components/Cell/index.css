@@ -1,0 +1,19 @@
+.cell {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    display: table-cell;
+    height: 10px;
+    width: 10px;
+}
+
+.cell-right-border {
+    border-right: 1px solid black;
+}
+
+.cell-bottom-border {
+    border-bottom: 1px solid black;
+}
+
+.cell-alive {
+    background-color: teal;
+}
