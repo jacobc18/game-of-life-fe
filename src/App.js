@@ -1,11 +1,13 @@
+import Application from './components/Application';
+import Conway from './components/Conway';
 import './App.css';
-import Grid from './components/Grid';
 
 function App() {
   return (
     <div>
-      grid-fe
-      <Grid></Grid>
+      <Application>
+        <Conway />
+      </Application>
     </div>
   );
 }

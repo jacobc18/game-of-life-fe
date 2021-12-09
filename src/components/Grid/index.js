@@ -1,21 +1,6 @@
-import { useState } from 'react';
 import Cell from '../Cell';
-import { GRID_HEIGHT_CELLS, GRID_WIDTH_CELLS } from '../../constants';
-import './index.css';
 
-function Grid() {
-  const [grid, setGrid] = useState(
-    Array.from({length: GRID_HEIGHT_CELLS}, () => 
-      Array.from({length: GRID_WIDTH_CELLS}, () => false)
-    )
-  );
-
-  const handleCellClick = (rowIdx, colIdx) => {
-    const gridCopy = [...grid];
-    gridCopy[rowIdx][colIdx] = !gridCopy[rowIdx][colIdx];
-    setGrid(gridCopy);
-  };
-
+function Grid({grid, cellClickHandler = () => {}}) {
   return (
     <div className="grid">
         {grid.map((cellRow, rowIdx) => {
@@ -28,7 +13,7 @@ function Grid() {
                   column={colIdx}
                   isAlive={cell}
                   onClick={() => {
-                    handleCellClick(rowIdx, colIdx);
+                    cellClickHandler(rowIdx, colIdx);
                   }}/>
               })}
             </div>

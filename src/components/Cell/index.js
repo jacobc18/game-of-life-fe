@@ -1,8 +1,8 @@
-import './index.css';
 import {
   GRID_HEIGHT_CELLS,
   GRID_WIDTH_CELLS
 } from '../../constants';
+import './index.css';
 
 function Cell({row, column, isAlive, onClick}) {
   let className = 'cell';
