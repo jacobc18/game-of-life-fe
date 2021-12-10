@@ -1,20 +1,22 @@
 import { useState } from 'react';
-import ApplicationRow from '../ApplicationRow';
-import ConwayButtons from '../ConwayButtons';
-import Grid from '../Grid';
 import {
-  STATUS_PAUSED
+  STATUS_PAUSED,
+  STATUS_RUNNING,
+  INTERVAL_SPEED_MS
 } from
 './constants';
 import {
   GRID_HEIGHT_CELLS,
   GRID_WIDTH_CELLS
 } from '../../constants';
-// import './index.css';
+import ApplicationRow from '../ApplicationRow';
+import ConwayButtons from '../ConwayButtons';
+import Grid from '../Grid';
+import useInterval from '../../hooks/useInterval';
 
 const createMatrix = (height, width, fillValue) => {
   return Array.from({length: height}, () => 
-    Array.from({length: width}, () => false)
+    Array.from({length: width}, () => fillValue)
   );
 };
 
@@ -33,9 +35,14 @@ const countAliveNeighbors = (grid, r, c) => {
 
 function Conway() {
   const [gameStatus, setGameStatus] = useState(STATUS_PAUSED);
+  const [generationCount, setGenerationCount] = useState(0);
   const [grid, setGrid] = useState(
     createMatrix(GRID_HEIGHT_CELLS, GRID_WIDTH_CELLS, false)
   );
+
+  useInterval(() => {
+    updateGridOneStep();
+  }, gameStatus === STATUS_RUNNING ? INTERVAL_SPEED_MS : null);
 
   const cellClickHandler = (rowIdx, colIdx) => {
     const gridCopy = [...grid];
@@ -44,42 +51,44 @@ function Conway() {
   };
 
   const updateGridOneStep = () => {
-    const gridCopy = [...grid];
+    const gridCopy = createMatrix(GRID_HEIGHT_CELLS, GRID_WIDTH_CELLS, false);
     for (let i = 0; i < grid.length; ++i) {
       for (let j = 0; j < grid[i].length; ++j) {
         const isAlive = grid[i][j];
         const numAliveNeighbors = countAliveNeighbors(grid, i, j);
-        if (!isAlive &&  numAliveNeighbors === 3) {
-          gridCopy[i][j] = !isAlive;
+        if (!isAlive && numAliveNeighbors === 3) {
+          gridCopy[i][j] = true;
         } else if (isAlive && (numAliveNeighbors < 2 || numAliveNeighbors > 3)) {
-          gridCopy[i][j] = !isAlive;
+          gridCopy[i][j] = false;
+        } else {
+          gridCopy[i][j] = grid[i][j];
         }
       }
     }
-    setGrid(gridCopy);
+    setGrid(() => gridCopy);
+    setGenerationCount(prevGenCount => prevGenCount + 1);
   };
 
   const stepBtnHandler = () => {
     updateGridOneStep();
   };
 
-  // debugging tool
-  const gridCountLogger = () => {
-    for (let i = 0; i < grid.length; ++i) {
-      let out = '';
-      for (let j = 0; j < grid[i].length; ++ j) {
-        out += countAliveNeighbors(grid, i, j) + ' ';
-      }
-      console.log(out);
-    }
+  const runBtnHandler = () => {
+    setGameStatus(STATUS_RUNNING);
+  };
+
+  const stopBtnHandler = () => {
+    setGameStatus(STATUS_PAUSED);
   };
 
   return (
     <div>
-        grid-fe
-          <Grid grid={grid} cellClickHandler={cellClickHandler}/>
-          <ApplicationRow>
-            <ConwayButtons actions={[stepBtnHandler]}/>
+        <Grid grid={grid} cellClickHandler={cellClickHandler}/>
+        <ApplicationRow>
+          Generation #{generationCount}
+        </ApplicationRow>
+        <ApplicationRow>
+          <ConwayButtons gameStatus={gameStatus} actions={[stepBtnHandler, runBtnHandler, stopBtnHandler]}/>
         </ApplicationRow>
     </div>
   );

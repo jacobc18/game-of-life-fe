@@ -2,8 +2,8 @@
     border-top: 1px solid black;
     border-left: 1px solid black;
     display: table-cell;
-    height: 10px;
-    width: 10px;
+    height: 8px;
+    width: 8px;
 }
 
 .cell-right-border {
@@ -15,5 +15,5 @@
 }
 
 .cell-alive {
-    background-color: teal;
+    background-color: #04AA6D;
 }
