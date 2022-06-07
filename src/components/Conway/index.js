@@ -13,10 +13,17 @@ import ApplicationRow from '../ApplicationRow';
 import ConwayButtons from '../ConwayButtons';
 import Grid from '../Grid';
 import useInterval from '../../hooks/useInterval';
+import getRandomBetween from '../../util/getRandomBetween';
 
 const createMatrix = (height, width, fillValue) => {
   return Array.from({length: height}, () => 
     Array.from({length: width}, () => fillValue)
+  );
+};
+
+const createMatrixFillFunc = (height, width, fillFunc) => {
+  return Array.from({length: height}, () => 
+    Array.from({length: width}, fillFunc)
   );
 };
 
@@ -39,10 +46,11 @@ function Conway() {
   const [grid, setGrid] = useState(
     createMatrix(GRID_HEIGHT_CELLS, GRID_WIDTH_CELLS, false)
   );
+  const [intervalOffset, setIntervalOffset] = useState(0);
 
   useInterval(() => {
     updateGridOneStep();
-  }, gameStatus === STATUS_RUNNING ? INTERVAL_SPEED_MS : null);
+  }, gameStatus === STATUS_RUNNING ? INTERVAL_SPEED_MS + intervalOffset : null);
 
   const cellClickHandler = (rowIdx, colIdx) => {
     const gridCopy = [...grid];
@@ -81,6 +89,20 @@ function Conway() {
     setGameStatus(STATUS_PAUSED);
   };
 
+  const fillRandomHandler = () => {
+    setGrid(createMatrixFillFunc(GRID_HEIGHT_CELLS, GRID_WIDTH_CELLS, () => getRandomBetween(0, 1) === 1));
+  };
+
+  const incrementIntervalHandler = () => {
+    setIntervalOffset(intervalOffset + 10);
+  };
+
+  const decrementIntervalHandler = () => {
+    if (INTERVAL_SPEED_MS + intervalOffset >= 11) {
+      setIntervalOffset(intervalOffset - 10);
+    }
+  };
+
   return (
     <div>
         <Grid grid={grid} cellClickHandler={cellClickHandler}/>
@@ -88,7 +110,10 @@ function Conway() {
           Generation #{generationCount}
         </ApplicationRow>
         <ApplicationRow>
-          <ConwayButtons gameStatus={gameStatus} actions={[stepBtnHandler, runBtnHandler, stopBtnHandler]}/>
+          Speed {INTERVAL_SPEED_MS + intervalOffset}ms
+        </ApplicationRow>
+        <ApplicationRow>
+          <ConwayButtons gameStatus={gameStatus} actions={[stepBtnHandler, runBtnHandler, stopBtnHandler, fillRandomHandler, incrementIntervalHandler, decrementIntervalHandler]}/>
         </ApplicationRow>
     </div>
   );

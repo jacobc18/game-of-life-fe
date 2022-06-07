@@ -16,3 +16,15 @@
 .stop-btn {
     background-color: red;
 }
+
+.random-btn {
+    background-color: aquamarine;
+}
+
+.interval-increment-btn {
+    background-color: chartreuse;
+}
+
+.interval-decrement-btn {
+    background-color: chartreuse;
+}
